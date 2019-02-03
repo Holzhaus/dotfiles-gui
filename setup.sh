@@ -1,14 +1,14 @@
 #!/bin/sh
 abspath() {
     olddir=$(pwd)
-    if [[ -d "$1" ]]; then
-        cd "$1"
-        echo "$(pwd -P)"
+    if [ -d "$1" ]; then
+        cd "$1" || exit 1
+        pwd -P
     else
-        cd "$(dirname "$1")"
+        cd "$(dirname "$1")" || exit 1
         echo "$(pwd -P)/$(basename "$1")"
     fi
-    cd "$olddir"
+    cd "$olddir" || exit 1
 }
 
 : "${HOME?Need to set HOME}"
@@ -46,7 +46,7 @@ symlink() {
     elif [ ! -e "$2" ]; then
        log "File '$2' does not exist, creating symlink..."
        ln -s "$1" "$2"
-    elif [ -e "$2" -a ! -e "$2.old" ]; then
+    elif [ -e "$2" ] && [ ! -e "$2.old" ]; then
         log "Creating Backup for '$2' -> '$2.old'"
         mv "$2" "$2.old"
         ln -s "$1" "$2"
@@ -103,8 +103,10 @@ symlink "$DOTFILES/Xresources.d"         "$HOME/.Xresources.d"
 # Zathura
 symlink "$DOTFILES/zathura"              "$XDG_CONFIG_HOME/zathura"
 
-shopt -s nullglob
 for executable in "$DOTFILES/bin/"*
 do
-    symlink "$executable" "$BINDIR/$(basename "$executable")"
+    if [ -x "$executable" ]
+    then
+        symlink "$executable" "$BINDIR/$(basename "$executable")"
+    fi
 done
