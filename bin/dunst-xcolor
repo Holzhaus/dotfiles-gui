@@ -1,0 +1,18 @@
+#!/bin/sh
+xcolors="$(xrdb -query | grep --extended-regexp --regexp='^dunst\.' --regexp='\*\.' | sort --field-separator='.' --key=1r,2)"
+
+get_xcolor() {
+    regex="$(printf '\.%s:\s+\K#\w+' "$1")"
+    printf '%s' "$xcolors" | grep --max-count=1 --perl-regexp --only-matching --ignore-case "$regex"
+}
+
+foreground="$(get_xcolor "foreground")"
+background="$(get_xcolor "background")"
+foreground_normal="$(get_xcolor "color4")"
+foreground_critical="$(get_xcolor "color5")"
+
+exec dunst \
+    -lb "$background" -nb "$background" -cb "$background" \
+    -lf "$foreground" -nf "$foreground_normal" -cf "$foreground_critical" \
+    -lfr "$background" -nfr "$background" -cfr "$background" \
+    -format "<b>%s</b>\\n<span color=\"$foreground\">%b</span>"

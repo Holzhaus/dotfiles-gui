@@ -1,0 +1,37 @@
+#!/bin/sh
+getmtime() {
+    stat --printf="%Y" "$1"
+}
+
+[ -z "$HOSTNAME" ] && HOSTNAME=$(hostname)
+
+BASECONFIG="$HOME/.i3/base.conf"
+HOSTCONFIG="$HOME/.i3/host.$HOSTNAME.conf"
+CONFIGFILE="$HOME/.i3/config"
+
+if [ -r "config" ]
+then
+    CONFIGTIMESTAMP=$(getmtime "$CONFIGFILE")
+else
+    CONFIGTIMESTAMP=0
+fi
+
+if [ -r "$HOSTCONFIG" ]
+then
+    if [ "$(getmtime "$HOSTCONFIG")" -gt "$CONFIGTIMESTAMP" ]
+    then
+        cat "$BASECONFIG" "$HOSTCONFIG" > "$CONFIGFILE"
+        exit 0
+    fi
+fi
+
+
+if [ "$(getmtime "$BASECONFIG")" -gt "$CONFIGTIMESTAMP" ]
+then
+    if [ -e "$HOSTCONFIG" ]
+    then
+        cat "$BASECONFIG" "$HOSTCONFIG" > "$CONFIGFILE"
+    else
+        cp "$BASECONFIG" "$CONFIGFILE"
+    fi
+fi

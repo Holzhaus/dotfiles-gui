@@ -1,0 +1,21 @@
+rofi.font: Fira Code 7
+! ------------------------------------------------------------------------------
+! ROFI Color theme
+! ------------------------------------------------------------------------------
+rofi.color-enabled: true
+! State:           'bg',        'fg',        'bgalt',     'hlbg',      'hlfg'
+rofi.color-window: BACKGROUND,  BACKGROUND,  BACKGROUND,
+rofi.color-normal: BACKGROUND,  FOREGROUND,  BACKGROUND,  COLOR2,      COLOR0
+rofi.color-active: COLOR4,      COLOR2,      BACKGROUND,  COLOR2,      COLOR0
+rofi.color-urgent: BACKGROUND,  COLOR4,      BACKGROUND,  BACKGROUND,  COLOR0
+! ------------------------------------------------------------------------------
+! ROFI Misc Settings
+! ------------------------------------------------------------------------------
+rofi.bw:                             0
+rofi.modi:                           combi
+rofi.location:                       0
+rofi.terminal:                       alacritty
+rofi.combi-modi:                     run,window,ssh,drun
+rofi.m:                              -1
+rofi.separator-style:                solid
+rofi.hide-scrollbar:                 true

@@ -1,0 +1,9 @@
+#!/bin/sh
+finish() {
+    printf "[%s] autorandr script exited\\n" "$(date)" >> /tmp/polybar.log
+}
+trap finish EXIT
+"$HOME/.config/polybar/launch.sh" "$AUTORANDR_CURRENT_PROFILE" 2>&1 | while read -r LINE
+do
+    printf "[%s] %s\\n" "$(date)" "$LINE" >> /tmp/polybar.log
+done

@@ -1,0 +1,10 @@
+URxvt.perl-ext-common: fullscreen,resize-font
+
+! Bind fullscreen toggle to F11
+URxvt.keysym.F11: perl:fullscreen:switch
+
+! Ctrl-plus and Ctrl-minus resize font size
+URxvt.resize-font.smaller: C-minus
+URxvt.resize-font.bigger: C-plus
+URxvt.resize-font.reset: C-equal
+URxvt.resize-font.show: C-question

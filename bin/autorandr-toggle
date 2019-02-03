@@ -1,0 +1,34 @@
+#!/bin/bash
+current="$(autorandr --current)"
+detected="$(autorandr --detected | sort)"
+
+if [ "$#" -gt 0 ]
+then
+    args=("$@")
+    detected="$(printf "%s" "$detected" | xargs --verbose --arg-file=<(printf -- '-x' && printf -- '%s' "${args[@]/#/$'\n-e '}") grep)"
+fi
+
+if [ -z "$detected" ]
+then
+    printf 'No profile detected!\n'
+    exit 1
+fi
+
+
+if [ "$(printf '%s' "$detected" | tail -n1)" = "$current" ]
+then
+    next="$(printf '%s' "$detected" | head -n1)"
+else
+    next="$(printf '%s' "$detected" | grep -A 1 "$current" | tail -n1)"
+fi
+
+
+if [ "$next" = "$current" ]
+then
+    printf 'Keeping profile "%s" (No other profile detected).\n' "$current"
+else
+    printf 'Switching from profile "%s" to "%s".\n' "$current" "$next"
+fi
+autorandr --change "$next"
+
+# vim: set ft=sh ff=unix ts=4 sw=4 tw=0 et :

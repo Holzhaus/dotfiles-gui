@@ -1,0 +1,16 @@
+#!/bin/sh
+findcovers() {
+    albumpath=$(dirname "$(mpc --format "%file%" current)")
+    find "$1/$albumpath" -maxdepth 1 -type f -iregex ".*/.*\(cover\|folder\|artwork\|front\).*[.]\(jpe?g\|png\|gif\|bmp\)"
+}
+
+if [ -d "$MPD_LIBRARY_PATH" ]
+then
+    cover="$(findcovers "$MPD_LIBRARY_PATH" | head -n1)"
+    summary="$(mpc --format "%title%" current)"
+    if [ -n "$cover" ] && [ -n "$summary" ]
+    then
+        body="$(mpc --format "%artist%<br><i>%album%</i>" current)"
+        notify-send --urgency=low --app-name "mpd" --icon="$cover" --category="music" "$summary" "$body"
+    fi
+fi

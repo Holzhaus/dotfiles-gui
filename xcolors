@@ -1,0 +1,57 @@
+! special
+#define FOREGROUND   #f8f8f2
+#define BACKGROUND   #272822
+#define CURSORCOLOR  #f8f8f2
+
+! black
+#define COLOR0       #272822
+#define COLOR8       #75715e
+
+! red
+#define COLOR1       #f92672
+#define COLOR9       #f92672
+
+! green
+#define COLOR2       #a6e22e
+#define COLOR10      #a6e22e
+
+! yellow
+#define COLOR3       #f4bf75
+#define COLOR11      #f4bf75
+
+! blue
+#define COLOR4       #66d9ef
+#define COLOR12      #66d9ef
+
+! magenta
+#define COLOR5       #ae81ff
+#define COLOR13      #ae81ff
+
+! cyan
+#define COLOR6       #a1efe4
+#define COLOR14      #a1efe4
+
+! white
+#define COLOR7       #f8f8f2
+#define COLOR15      #f9f8f5
+
+
+*.foreground:  FOREGROUND
+*.background:  BACKGROUND
+*.cursorColor: CURSORCOLOR
+*.color0:      COLOR0
+*.color8:      COLOR8
+*.color1:      COLOR1
+*.color9:      COLOR9
+*.color2:      COLOR2
+*.color10:     COLOR10
+*.color3:      COLOR3
+*.color11:     COLOR11
+*.color4:      COLOR4
+*.color12:     COLOR12
+*.color5:      COLOR5
+*.color13:     COLOR13
+*.color6:      COLOR6
+*.color14:     COLOR14
+*.color7:      COLOR7
+*.color15:     COLOR15

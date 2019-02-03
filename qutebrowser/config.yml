@@ -1,0 +1,34 @@
+auto_save.session: true
+completion.use_best_match: true
+content.headers.accept_language: de-DE, de;q=0.9, en-US;q=0.8, en;q=0.7, *;q=0.5
+content.headers.do_not_track: true
+content.proxy: system
+content.xss_auditing: true
+prompt.filebrowser: true
+session.lazy_restore: true
+#spellcheck.languages: ["de-DE", "en-US"]
+url.default_page: https://www.tagesschau.de
+
+bindings.commands:
+    normal:
+        <Ctrl+e>: scroll-down
+        <Ctrl+y>: scroll-up
+        ",t": getmagnet
+        ",T": hint links spawn --userscript getmagnet.sh {hint-url}
+        ",f": getfeed
+        ",F": hint links spawn --userscript getfeed.sh {hint-url}
+        ",p": config-cycle content.proxy "http://127.0.0.1:8080" "system"
+        ",n": config-cycle content.user_stylesheets "~/.config/qutebrowser/dark.css" ""
+        '<z><l>': 'spawn --userscript qute-pass'
+        '<z><u><l>': 'spawn --userscript qute-pass --username-only'
+        '<z><p><l>': 'spawn --userscript qute-pass --password-only'
+        '<z><o><l>': 'spawn --userscript qute-pass --otp-only'
+    insert:
+        <Ctrl+e>: scroll-down
+        <Ctrl+y>: scroll-up
+
+aliases:
+    scroll-down: scroll-px 0 100
+    scroll-up: scroll-px 0 -100
+    getmagnet: spawn --userscript getmagnet.sh
+    getfeed: spawn --userscript getfeed.sh

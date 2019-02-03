@@ -1,0 +1,13 @@
+output VGA-0
+off
+output DisplayPort-0
+off
+output DisplayPort-1
+off
+output DisplayPort-2
+off
+output LVDS
+gamma 1.0:0.909:0.833
+mode 1366x768
+pos 0x0
+rate 60.10

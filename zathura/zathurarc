@@ -1,0 +1,12 @@
+# Use system clipboard
+set selection-clipboard clipboard
+
+# Enable incremental search
+set incremental-search true
+
+# Autocomplete with recent files is annoying
+set show-directories true
+set show-recent false
+
+map <C-e> feedkeys "jjj"
+map <C-y> feedkeys "kkk"
