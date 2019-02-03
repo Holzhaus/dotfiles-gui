@@ -132,3 +132,6 @@ fonts:
         error: "8p monospace"
         info: "8p monospace"
         warning: "8p monospace"
+
+qt:
+  highdpi: true
