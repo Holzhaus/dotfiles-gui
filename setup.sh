@@ -2,13 +2,13 @@
 abspath() {
     olddir=$(pwd)
     if [ -d "$1" ]; then
-        cd "$1" || exit 1
+        cd "$1" || exit
         pwd -P
     else
-        cd "$(dirname "$1")" || exit 1
+        cd "$(dirname "$1")" || exit
         echo "$(pwd -P)/$(basename "$1")"
     fi
-    cd "$olddir" || exit 1
+    cd "$olddir" || exit
 }
 
 : "${HOME?Need to set HOME}"
