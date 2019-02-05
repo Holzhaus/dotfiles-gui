@@ -93,7 +93,6 @@ symlink "$DOTFILES/rofi"                 "$HOME/.rofi"
 # rxvt-unicode
 symlink "$DOTFILES/urxvt"                "$HOME/.urxvt"
 
-
 # xinitrc
 symlink "$DOTFILES/xinitrc"              "$HOME/.xinitrc"
 symlink "$DOTFILES/xinitrc.d"            "$HOME/.xinitrc.d"
