@@ -1,39 +1,39 @@
 ! special
-#define FOREGROUND   #f8f8f2
+#define FOREGROUND   #f1ebeb
 #define BACKGROUND   #272822
-#define CURSORCOLOR  #f8f8f2
+#define CURSORCOLOR  #f1ebeb
 
 ! black
-#define COLOR0       #272822
-#define COLOR8       #75715e
+#define COLOR0       #48483e
+#define COLOR8       #76715e
 
 ! red
-#define COLOR1       #f92672
-#define COLOR9       #f92672
+#define COLOR1       #dc2566
+#define COLOR9       #fa2772
 
 ! green
-#define COLOR2       #a6e22e
-#define COLOR10      #a6e22e
+#define COLOR2       #8fc029
+#define COLOR10      #a7e22e
 
 ! yellow
-#define COLOR3       #f4bf75
-#define COLOR11      #f4bf75
+#define COLOR3       #d4c96e
+#define COLOR11      #e7db75
 
 ! blue
-#define COLOR4       #66d9ef
-#define COLOR12      #66d9ef
+#define COLOR4       #55bcce
+#define COLOR12      #66d9ee
 
 ! magenta
-#define COLOR5       #ae81ff
-#define COLOR13      #ae81ff
+#define COLOR5       #9358fe
+#define COLOR13      #ae82ff
 
 ! cyan
-#define COLOR6       #a1efe4
-#define COLOR14      #a1efe4
+#define COLOR6       #56b7a5
+#define COLOR14      #66efd5
 
 ! white
-#define COLOR7       #f8f8f2
-#define COLOR15      #f9f8f5
+#define COLOR7       #acada1
+#define COLOR15      #cfd0c2
 
 
 *.foreground:  FOREGROUND
