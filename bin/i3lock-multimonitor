@@ -1,36 +1,22 @@
 #!/bin/bash
 CACHE_DIR="${HOME}/.cache/i3lock"
-BACKGROUND_IMAGE="$1"
-OVERLAY_IMAGE="$2"
 
-
-if ! [ -e "${BACKGROUND_IMAGE}" ]; then
-    printf 'Error: Image "%s" not found, continuing without image...\n' "${BACKGROUND_IMAGE}" >&2
-    IMAGE_ARGS=()
-else
-    notify-send -u low "Locking Screen..." "Please wait while the screenlock is prepared."
-
-    if ! [ -d "${CACHE_DIR}" ]; then
-        mkdir -p "${CACHE_DIR}"
-    fi
-
-    # If BACKGROUND_IMAGE is a directory, select a random JPG/PNG file from it
-    if [ -d "${BACKGROUND_IMAGE}" ]; then
-        BACKGROUND_IMAGE="$(find "${BACKGROUND_IMAGE}" -maxdepth 1 -type f \( -iname "*.jpg" -or -iname "*.png" \) | shuf -n 1)"
-    fi
+prepare_lockscreen() {
+    local BACKGROUND_IMAGE="$1"
+    local OVERLAY_IMAGE="$2"
 
     # Get the current XRANDR configuration
     XRANDR="$(xrandr -q)"
-    if [ -e "$OVERLAY_IMAGE" ]; then
+    if ! [ -z "$OVERLAY_IMAGE" ]; then
         CHECKSUM="$(cat "${BACKGROUND_IMAGE}" "${OVERLAY_IMAGE}" <(printf '%s' "${XRANDR}") | md5sum -)"
     else
         CHECKSUM="$(cat "${BACKGROUND_IMAGE}" <(printf '%s' "${XRANDR}") | md5sum -)"
     fi
-    IMAGE_PATH="${CACHE_DIR}/${CHECKSUM%  *}.png"
+    local PREPARED_IMAGE="${CACHE_DIR}/${CHECKSUM%  *}.png"
 
     # We do not have a cached lockscreen image for this configuration, create a new one
-    if ! [ -e "${IMAGE_PATH}" ]; then
-        printf '%s does not exist, creating...\n' "${IMAGE_PATH}" >&2
+    if ! [ -e "${PREPARED_IMAGE}" ]; then
+        printf '%s does not exist, creating...\n' "${PREPARED_IMAGE}" >&2
         IMAGE_WIDTH=0
         IMAGE_HEIGHT=0
         IM_ARGS=""
@@ -38,9 +24,11 @@ else
         trap 'rm -rf "${TEMP_DIR}"' EXIT
 
         if [ -e "${OVERLAY_IMAGE}" ]; then
+            printf 'Creating base image with overlay, creating...\n' "${PREPARED_IMAGE}" >&2
             BASE_IMAGE="${TEMP_DIR}/base.png"
-            convert "${BACKGROUND_IMAGE}" "${OVERLAY_IMAGE}" -gravity center  -composite "${BASE_IMAGE}"
+            convert "${BACKGROUND_IMAGE}" -resize 1920x1080^ -gravity center -extent 1920x1080 "${OVERLAY_IMAGE}" -gravity center  -composite "${BASE_IMAGE}"
         else
+            printf 'Using background image as base image...\n' "${PREPARED_IMAGE}" >&2
             BASE_IMAGE="${BACKGROUND_IMAGE}"
         fi
 
@@ -74,20 +62,67 @@ else
             TEMP_IMG="${TEMP_DIR}/${IMAGE_WIDTH}x${IMAGE_HEIGHT}-final.png"
             convert -size "${IMAGE_WIDTH}x${IMAGE_HEIGHT}" "xc:black" "${TEMP_IMG}"
             convert "${TEMP_IMG}" ${IM_ARGS} "${TEMP_IMG}"
-            mv "${TEMP_IMG}" "${IMAGE_PATH}"
+            mv "${TEMP_IMG}" "${PREPARED_IMAGE}"
         fi
     fi
 
-    if ! [ -e "${IMAGE_PATH}" ]; then
-        printf 'Warning: Image processing failed, using original image.\n' >&2
-        IMAGE_PATH="${BASE_IMAGE}"
+    printf '%s' "${PREPARED_IMAGE}"
+}
+
+if [ "$1" == "-p" ]; then
+    PREPARE=1
+    shift
+fi
+
+BACKGROUND_IMAGE="$1"
+OVERLAY_IMAGE="$2"
+
+if ! [ -d "${CACHE_DIR}" ]; then
+    mkdir -p "${CACHE_DIR}"
+fi
+
+if [ -n "${PREPARE}" ] && [ "${PREPARE}" -ne 0 ]; then
+    if ! [ -e "${BACKGROUND_IMAGE}" ]; then
+        printf 'No such file or directory: %s\n' "${BACKGROUND_IMAGE}" >&2
+        exit 1
     fi
 
-    IMAGE_ARGS=(-i "${IMAGE_PATH}")
+    if [ -d "${BACKGROUND_IMAGE}" ]; then
+        printf 'Preparing lockscreens in directory %s...\n' "${BACKGROUND_IMAGE}" >&2
+        find "${BACKGROUND_IMAGE}/" -maxdepth 1 -type f \( -iname "*.jpg" -or -iname "*.png" \) -print0 | while IFS= read -r -d $'\0' image
+        do
+            prepare_lockscreen "$image" "$OVERLAY_IMAGE" >/dev/null
+        done
+    else
+        printf 'Preparing lockscreen at %s...\n' "${BACKGROUND_IMAGE}" >&2
+        prepare_lockscreen "$BACKGROUND_IMAGE" "$OVERLAY_IMAGE" >/dev/null
+    fi
+
+    printf 'Lockscreen preparation done.\n' >&2
+    exit 0
+fi
+
+if ! [ -e "${BACKGROUND_IMAGE}" ]; then
+    printf 'Error: Image "%s" not found, continuing without image...\n' "${BACKGROUND_IMAGE}" >&2
+else
+    notify-send -u low "Locking Screen..." "Please wait while the screenlock is prepared."
+
+    # If BACKGROUND_IMAGE is a directory, select a random JPG/PNG file from it
+    if [ -d "${BACKGROUND_IMAGE}" ]; then
+        BACKGROUND_IMAGE="$(find "${BACKGROUND_IMAGE}/" -maxdepth 1 -type f \( -iname "*.jpg" -or -iname "*.png" \) | shuf -n 1)"
+    fi
+
+    PREPARED_IMAGE=$(prepare_lockscreen "$BACKGROUND_IMAGE" "$OVERLAY_IMAGE")
+    if ! [ -e "${PREPARED_IMAGE}" ]; then
+        printf 'Warning: Image processing failed, using original image.\n' >&2
+        printf "\n\n%s\n%s\n\n" "$BASE_IMAGE" "$BACKGROUND_IMAGE"
+        [ -e "${BASE_IMAGE}" ] && PREPARED_IMAGE="${BASE_IMAGE}" || PREPARED_IMAGE="${BACKGROUND_IMAGE}"
+    fi
 fi
 
 # Finally lock the screen
-printf 'Locking screen...\n' >&2
+printf 'Locking screen...\n'  >&2
+[ -e "$PREPARED_IMAGE" ] && IMAGE_ARGS=(-i "${PREPARED_IMAGE}") || IMAGE_ARGS=()
 if [[ -e /dev/fd/${XSS_SLEEP_LOCK_FD:--1} ]]; then
     kill_i3lock() {
         pkill --exact --euid $EUID "$@" i3lock

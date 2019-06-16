@@ -72,6 +72,7 @@ symlink "$DOTFILES/dunst"                "$XDG_CONFIG_HOME/dunst"
 
 # i3-gaps config
 symlink "$DOTFILES/i3"                   "$HOME/.i3"
+symlink "$DOTFILES/i3lock"               "$HOME/.i3lock"
 
 # nitrogen
 symlink "$DOTFILES/nitrogen"             "$XDG_CONFIG_HOME/nitrogen"
