@@ -24,7 +24,7 @@ prepare_lockscreen() {
         trap 'rm -rf "${TEMP_DIR}"' EXIT
 
         if [ -e "${OVERLAY_IMAGE}" ]; then
-            printf 'Creating base image with overlay, creating...\n' "${PREPARED_IMAGE}" >&2
+            printf 'Creating base image with overlay...\n' "${PREPARED_IMAGE}" >&2
             BASE_IMAGE="${TEMP_DIR}/base.png"
             convert "${BACKGROUND_IMAGE}" -resize 1920x1080^ -gravity center -extent 1920x1080 "${OVERLAY_IMAGE}" -gravity center  -composite "${BASE_IMAGE}"
         else
