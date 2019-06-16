@@ -1,49 +1,49 @@
 #!/bin/bash
-CACHE_DIR="${HOME}/.cache/i3lock-multimonitor"
-if ! [ -e "${CACHE_DIR}" ]; then
-    mkdir -p "${CACHE_DIR}"
-fi
+CACHE_DIR="${HOME}/.cache/i3lock"
+BACKGROUND_IMAGE="$1"
+OVERLAY_IMAGE="$2"
 
-function usage {
-    printf 'usage: %s [-p] IMAGE_PATH [ I3LOCK_ARGS ... ]' "$0"
-    exit 1
-}
 
-PREPARE_ONLY=0
-
-if [ "$#" -eq 0 ]; then
-    usage
-fi
-
-if [ "$1" == "--prepare-only" ]; then
-    if [ "$#" -eq 1 ]; then
-        usage
-    fi
-    PREPARE_ONLY=1
-    printf 'Flag --prepare-only given, generating image for later usage...\n'
-    shift
-
-    ORIGINAL_IMAGE_PATH="$2"
-else
-    ORIGINAL_IMAGE_PATH="$1"
-fi
-shift
-
-if ! [ -e "${ORIGINAL_IMAGE_PATH}" ]; then
-    echo "Error: Image '${ORIGINAL_IMAGE_PATH}' not found, continuing without image..."
+if ! [ -e "${BACKGROUND_IMAGE}" ]; then
+    printf 'Error: Image "%s" not found, continuing without image...\n' "${BACKGROUND_IMAGE}" >&2
     IMAGE_ARGS=()
 else
+    notify-send -u low "Locking Screen..." "Please wait while the screenlock is prepared."
+
+    if ! [ -d "${CACHE_DIR}" ]; then
+        mkdir -p "${CACHE_DIR}"
+    fi
+
+    # If BACKGROUND_IMAGE is a directory, select a random JPG/PNG file from it
+    if [ -d "${BACKGROUND_IMAGE}" ]; then
+        BACKGROUND_IMAGE="$(find "${BACKGROUND_IMAGE}" -maxdepth 1 -type f \( -iname "*.jpg" -or -iname "*.png" \) | shuf -n 1)"
+    fi
+
+    # Get the current XRANDR configuration
     XRANDR="$(xrandr -q)"
-    CHECKSUM="$(cat "${ORIGINAL_IMAGE_PATH}" <(printf '%s' "${XRANDR}") | md5sum -)"
+    if [ -e "$OVERLAY_IMAGE" ]; then
+        CHECKSUM="$(cat "${BACKGROUND_IMAGE}" "${OVERLAY_IMAGE}" <(printf '%s' "${XRANDR}") | md5sum -)"
+    else
+        CHECKSUM="$(cat "${BACKGROUND_IMAGE}" <(printf '%s' "${XRANDR}") | md5sum -)"
+    fi
     IMAGE_PATH="${CACHE_DIR}/${CHECKSUM%  *}.png"
 
+    # We do not have a cached lockscreen image for this configuration, create a new one
     if ! [ -e "${IMAGE_PATH}" ]; then
-        printf '%s does not exist, creating...\n' "${IMAGE_PATH}"
+        printf '%s does not exist, creating...\n' "${IMAGE_PATH}" >&2
         IMAGE_WIDTH=0
         IMAGE_HEIGHT=0
         IM_ARGS=""
         TEMP_DIR="$(mktemp -t -d "i3lock.XXXXXXXXXX")"
         trap 'rm -rf "${TEMP_DIR}"' EXIT
+
+        if [ -e "${OVERLAY_IMAGE}" ]; then
+            BASE_IMAGE="${TEMP_DIR}/base.png"
+            convert "${BACKGROUND_IMAGE}" "${OVERLAY_IMAGE}" -gravity center  -composite "${BASE_IMAGE}"
+        else
+            BASE_IMAGE="${BACKGROUND_IMAGE}"
+        fi
+
         while read -r LINE
         do
             if [[ "$LINE" =~ ([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+) ]]; then
@@ -51,12 +51,12 @@ else
                 SCREEN_HEIGHT=${BASH_REMATCH[2]}
                 SCREEN_X=${BASH_REMATCH[3]}
                 SCREEN_Y=${BASH_REMATCH[4]}
-                printf 'Found active screen: %s\n' "${BASH_REMATCH[0]}"
+                printf 'Found active screen: %s\n' "${BASH_REMATCH[0]}" >&2
 
                 TEMP_IMG="${TEMP_DIR}/${SCREEN_WIDTH}x${SCREEN_HEIGHT}.png"
                 if ! [ -e "${TEMP_IMG}" ]
                 then
-                    convert "${ORIGINAL_IMAGE_PATH}" -resize "${SCREEN_WIDTH}X${SCREEN_HEIGHT}^" -gravity center -crop "${SCREEN_WIDTH}X${SCREEN_HEIGHT}+0+0" +repage "${TEMP_IMG}" || {
+                    convert "${BASE_IMAGE}" -resize "${SCREEN_WIDTH}X${SCREEN_HEIGHT}^" -gravity center -crop "${SCREEN_WIDTH}X${SCREEN_HEIGHT}+0+0" +repage "${TEMP_IMG}" || {
                         SCREEN_WIDTH=0
                         SCREEN_HEIGHT=0
                         break
@@ -79,18 +79,15 @@ else
     fi
 
     if ! [ -e "${IMAGE_PATH}" ]; then
-        printf 'Warning: Image processing failed, using original image.\n'
-        IMAGE_PATH="${ORIGINAL_IMAGE_PATH}"
+        printf 'Warning: Image processing failed, using original image.\n' >&2
+        IMAGE_PATH="${BASE_IMAGE}"
     fi
 
     IMAGE_ARGS=(-i "${IMAGE_PATH}")
 fi
 
-if [ "$PREPARE_ONLY" -ne 0 ]; then
-    exit 0
-fi
-
-printf 'Locking screen...\n'
+# Finally lock the screen
+printf 'Locking screen...\n' >&2
 if [[ -e /dev/fd/${XSS_SLEEP_LOCK_FD:--1} ]]; then
     kill_i3lock() {
         pkill --exact --euid $EUID "$@" i3lock
