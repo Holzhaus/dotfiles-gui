@@ -46,13 +46,13 @@ def dict_attrs(obj, path=''):
 
 def read_yml(filepath, xresources=None):
     with open(filepath, mode='r') as f:
-        yaml_data = yaml.load(f)
+        yaml_data = yaml.safe_load(f)
         for k, v in dict_attrs(yaml_data):
             if xresources and isinstance(v, str):
                 v = v.format_map(xresources)
-            if k in CONFIG_KEYS_DICT:
-                v.update(config.get(k))
-            config.set(k, v)
+            yield k, v
+
+
 
 
 xresources = read_xresources('*')
@@ -62,5 +62,28 @@ config_files = (
     for fn in glob.iglob(os.path.join(glob.escape(config.configdir), '*.yml'))
     if os.path.basename(fn) != 'autoconfig.yml'
 )
+
+config_data = {}
 for filename in config_files:
-    read_yml(filename, xresources=xresources)
+    for k, v in read_yml(filename, xresources=xresources):
+        if k in CONFIG_KEYS_DICT:
+            if k not in config_data:
+                config_data[k] = config.get(k)
+
+            if all(isinstance(x, dict) for x in config_data[k].values()):
+                v = {
+                    subkey: {**config_data[k].get(subkey, {}), **subval}
+                    for subkey, subval in v.items()
+                }
+            elif all(isinstance(x, list) for x in config_data[k].values()):
+                v = {
+                    subkey: config_data[k].get(subkey, []) + subval
+                    for subkey, subval in v.items()
+                }
+            config_data[k].update(v)
+        else:
+            config_data[k] = v
+
+print(repr(config_data['bindings.commands']))
+for k, v in config_data.items():
+    config.set(k, v)
