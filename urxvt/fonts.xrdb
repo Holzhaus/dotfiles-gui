@@ -1,6 +1,0 @@
-URxvt*letterSpace: -1
-
-URxvt.font: xft:Droid Sans Mono:pixelsize=12:style=Regular
-URxvt.boldFont: xft:Droid Sans Mono:pixelsize=12:style=Bold
-URxvt.italicFont: xft:Operator Mono Book:pixelsize=14:style=Italic
-URxvt.bolditalicFont: xft:Operator Mono Bold:pixelsize=14:style=Italic

@@ -1,5 +1,4 @@
 #include ".xcolors"
-#include ".urxvt/urxvt.xrdb"
 #include ".rofi/rofi.xrdb"
 
 !-- Xft settings --!
