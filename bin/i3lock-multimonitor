@@ -23,15 +23,6 @@ prepare_lockscreen() {
         TEMP_DIR="$(mktemp -t -d "i3lock.XXXXXXXXXX")"
         trap 'rm -rf "${TEMP_DIR}"' EXIT
 
-        if [ -e "${OVERLAY_IMAGE}" ]; then
-            printf 'Creating base image with overlay...\n' "${PREPARED_IMAGE}" >&2
-            BASE_IMAGE="${TEMP_DIR}/base.png"
-            convert "${BACKGROUND_IMAGE}" -resize 1920x1080^ -gravity center -extent 1920x1080 "${OVERLAY_IMAGE}" -gravity center  -composite "${BASE_IMAGE}"
-        else
-            printf 'Using background image as base image...\n' "${PREPARED_IMAGE}" >&2
-            BASE_IMAGE="${BACKGROUND_IMAGE}"
-        fi
-
         while read -r LINE
         do
             if [[ "$LINE" =~ ([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+) ]]; then
@@ -44,11 +35,19 @@ prepare_lockscreen() {
                 TEMP_IMG="${TEMP_DIR}/${SCREEN_WIDTH}x${SCREEN_HEIGHT}.png"
                 if ! [ -e "${TEMP_IMG}" ]
                 then
-                    convert "${BASE_IMAGE}" -resize "${SCREEN_WIDTH}X${SCREEN_HEIGHT}^" -gravity center -crop "${SCREEN_WIDTH}X${SCREEN_HEIGHT}+0+0" +repage "${TEMP_IMG}" || {
+                    convert "${BACKGROUND_IMAGE}" -resize "${SCREEN_WIDTH}X${SCREEN_HEIGHT}^" -gravity center -crop "${SCREEN_WIDTH}X${SCREEN_HEIGHT}+0+0" +repage "${TEMP_IMG}" || {
                         SCREEN_WIDTH=0
                         SCREEN_HEIGHT=0
                         break
                     }
+
+                    if [ -e "${OVERLAY_IMAGE}" ]; then
+                        convert "${TEMP_IMG}" "${OVERLAY_IMAGE}" -gravity center  -composite "${TEMP_IMG}" || {
+                            SCREEN_WIDTH=0
+                            SCREEN_HEIGHT=0
+                            break
+                        }
+                    fi
                 fi
 
                 (( IMAGE_WIDTH < (SCREEN_WIDTH+SCREEN_X) )) && IMAGE_WIDTH=$(( SCREEN_WIDTH + SCREEN_X ))
