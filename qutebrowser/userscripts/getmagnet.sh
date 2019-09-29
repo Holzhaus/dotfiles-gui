@@ -27,7 +27,7 @@ fi
 IFS=$'\n'
 for URL in $URLS
 do
-    if command transmission-remote "$TRANSMISSION_HOST" -a "$URL"
+    if command transmission-remote "$TRANSMISSION_HOST" -a "$URL" --auth "$TRANSMISSION_AUTH"
     then
         qute_run 'message-info "Added url: %s"' "$URL"
     else
