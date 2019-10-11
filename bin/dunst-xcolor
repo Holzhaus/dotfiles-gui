@@ -14,5 +14,5 @@ foreground_critical="$(get_xcolor "color5")"
 exec dunst \
     -lb "$background" -nb "$background" -cb "$background" \
     -lf "$foreground" -nf "$foreground_normal" -cf "$foreground_critical" \
-    -lfr "$foreground" -nfr "$foreground_normal" -cfr "$foreground_critical" \
+    -lfr "$background" -nfr "$background" -cfr "$background" \
     -format "<b>%s</b>\\n<span color=\"$foreground\">%b</span>"
