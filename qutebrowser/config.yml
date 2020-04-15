@@ -9,6 +9,8 @@ session.lazy_restore: true
 #spellcheck.languages: ["de-DE", "en-US"]
 url.default_page: https://www.tagesschau.de
 
+editor.command: ['alacritty', '-e', 'nvim', '{}']
+
 bindings.commands:
     normal:
         <Ctrl+e>: scroll-down
