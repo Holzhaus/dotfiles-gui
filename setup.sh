@@ -98,6 +98,9 @@ symlink "$DOTFILES/urxvt"                "$HOME/.urxvt"
 symlink "$DOTFILES/xinitrc"              "$HOME/.xinitrc"
 symlink "$DOTFILES/xinitrc.d"            "$HOME/.xinitrc.d"
 
+# xprofile
+symlink "$DOTFILES/xprofile"             "$HOME/.xprofile"
+
 # Xresources
 symlink "$DOTFILES/xcolors"              "$HOME/.xcolors"
 symlink "$DOTFILES/Xresources"           "$HOME/.Xresources"
