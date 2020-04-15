@@ -119,7 +119,6 @@ hints:
     border: "1px solid {color0}"
 
 fonts:
-    monospace: "Meslo LG M"
     hints: "bold 8pt monospace"
     tabs: "8pt monospace"
     statusbar: "8pt monospace"
