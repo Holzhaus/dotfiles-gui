@@ -18,6 +18,8 @@ bindings.commands:
         ",eu": edit-url
         ",eo": open-editor
         ",t": getmagnet
+        ",K": hint links kodi-play-url {hint-url}
+        ",k": kodi-play-url {url}
         ",T": hint links spawn --userscript getmagnet.sh {hint-url}
         ",f": getfeed
         ",F": hint links spawn --userscript getfeed.sh {hint-url}
@@ -36,3 +38,4 @@ aliases:
     scroll-up: scroll-px 0 -100
     getmagnet: spawn --userscript getmagnet.sh
     getfeed: spawn --userscript getfeed.sh
+    kodi-play-url: spawn --userscript kodi-play-url.sh
