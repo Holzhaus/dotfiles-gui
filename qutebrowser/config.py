@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import dracula.draw
+
 import glob
 import os
 import subprocess
@@ -87,3 +89,10 @@ for filename in config_files:
 print(repr(config_data['bindings.commands']))
 for k, v in config_data.items():
     config.set(k, v)
+
+dracula.draw.blood(c, {
+    'spacing': {
+        'vertical': 6,
+        'horizontal': 8,
+    }
+})
