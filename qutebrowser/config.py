@@ -34,25 +34,33 @@ def read_xresources(prefix):
     return props
 
 
-def dict_attrs(obj, path=''):
+def dict_attrs(obj, path='', autoconfig=False):
     if isinstance(obj, dict):
         for k, v in obj.items():
-            newpath = '{}.{}'.format(path, k) if path else k
-            if newpath in CONFIG_KEYS_DICT:
-                yield newpath, v
+            if autoconfig and k == 'global':
+                yield path, v
             else:
-                yield from dict_attrs(v, newpath)
+                newpath = '{}.{}'.format(path, k) if path else k
+                if newpath in CONFIG_KEYS_DICT:
+                    yield newpath, v
+                else:
+                    yield from dict_attrs(v, newpath, autoconfig=autoconfig)
     else:
         yield path, obj
 
-
 def read_yml(filepath, xresources=None):
+    autoconfig = os.path.basename(filepath) == 'autoconfig.yml'
     with open(filepath, mode='r') as f:
         yaml_data = yaml.safe_load(f)
-        for k, v in dict_attrs(yaml_data):
-            if xresources and isinstance(v, str):
-                v = v.format_map(xresources)
-            yield k, v
+        if autoconfig:
+            if 'settings' not in yaml_data:
+                return
+            yaml_data = yaml_data['settings']
+
+    for k, v in dict_attrs(yaml_data, autoconfig=autoconfig):
+        if xresources and isinstance(v, str):
+            v = v.format_map(xresources)
+        yield k, v
 
 
 
@@ -62,7 +70,6 @@ xresources = read_xresources('*')
 config_files = (
     fn
     for fn in glob.iglob(os.path.join(glob.escape(config.configdir), '*.yml'))
-    if os.path.basename(fn) != 'autoconfig.yml'
 )
 
 config_data = {}
