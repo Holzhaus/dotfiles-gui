@@ -4,3 +4,6 @@ fonts:
 
 qt:
   highdpi: true
+
+window:
+  hide_decoration: true
