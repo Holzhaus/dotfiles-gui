@@ -1,16 +1,6 @@
 fonts:
-    hints: "bold 8pt monospace"
-    tabs: "8pt monospace"
-    statusbar: "8pt monospace"
-    prompts: "8pt monospace"
-    debug_console: "8p monospace"
-    completion:
-        category: "8pt monospace"
-        entry: "8pt monospace"
-    messages:
-        error: "8p monospace"
-        info: "8p monospace"
-        warning: "8p monospace"
+    default_family: "Fira Code"
+    default_size: "10pt"
 
 qt:
   highdpi: true
