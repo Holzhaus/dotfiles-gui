@@ -86,7 +86,6 @@ for filename in config_files:
         else:
             config_data[k] = v
 
-print(repr(config_data['bindings.commands']))
 for k, v in config_data.items():
     config.set(k, v)
 
