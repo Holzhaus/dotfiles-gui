@@ -8,6 +8,6 @@ if [ -z "$STREAM_URL" ]; then
     STREAM_URL="$1"
 fi
 
-echo curl "http://${KODI_HOST}:${KODI_PORT}/jsonrpc" \
+curl "http://${KODI_HOST}:${KODI_PORT}/jsonrpc" \
     -H "Content-Type: application/json" \
     --data "{\"method\":\"Player.Open\",\"id\":44,\"jsonrpc\":\"2.0\",\"params\":{\"item\":{\"file\":\"${STREAM_URL}\"}}}"
