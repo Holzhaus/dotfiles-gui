@@ -398,7 +398,7 @@ alt_send_esc: true
 #   - AppKeypad
 key_bindings:
   - { key: Equals,   mods: Control, action: IncreaseFontSize }
-  - { key: Subtract, mods: Control, action: DecreaseFontSize }
+  - { key: Minus,    mods: Control, action: DecreaseFontSize }
   - { key: Insert,                  action: Paste                            }
   - { key: Insert,   mods: Shift,   action: PasteSelection                   }
   - { key: Copy,                    action: Copy                             }
