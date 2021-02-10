@@ -63,7 +63,7 @@ def read_yml(filepath, xresources=None):
         yield k, v
 
 
-
+config.load_autoconfig(True)
 
 xresources = read_xresources('*')
 
