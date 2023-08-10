@@ -22,6 +22,7 @@ bindings.commands:
         ",k": kodi-play-url {url}
         ",T": hint links spawn --userscript getmagnet.sh {hint-url}
         ",f": getfeed
+        ",a": open https://web.archive.org/save/{url}
         ",F": hint links spawn --userscript getfeed.sh {hint-url}
         ",p": config-cycle content.proxy "http://127.0.0.1:8080" "system"
         ",n": config-cycle content.user_stylesheets "~/.config/qutebrowser/dark.css" ""

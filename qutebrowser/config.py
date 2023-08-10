@@ -96,6 +96,15 @@ for filename in config_files:
 for k, v in config_data.items():
     config.set(k, v)
 
+with config.pattern('*://meet.jit.si/') as p:
+    p.content.media.audio_capture = True
+    p.content.media.audio_video_capture = True
+    p.content.media.video_capture = True
+with config.pattern('*://ruhr-uni-bochum.zoom.us/') as p:
+    p.content.media.audio_capture = True
+    p.content.media.audio_video_capture = True
+    p.content.media.video_capture = True
+
 dracula.draw.blood(c, {
     'spacing': {
         'vertical': 6,
