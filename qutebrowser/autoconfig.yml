@@ -8,12 +8,6 @@ config_version: 2
 settings:
   content.blocking.enabled:
     global: true
-  content.media.audio_capture:
-    https://meet.jit.si: true
-    https://ruhr-uni-bochum.zoom.us: true
-  content.media.video_capture:
-    https://meet.jit.si: true
-    https://ruhr-uni-bochum.zoom.us: true
   content.proxy:
     global: system
   content.tls.certificate_errors:
