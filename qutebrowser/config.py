@@ -59,7 +59,10 @@ def read_yml(filepath, xresources=None):
 
     for k, v in dict_attrs(yaml_data, autoconfig=autoconfig):
         if xresources and isinstance(v, str):
-            v = v.format_map(xresources)
+            try:
+                v = v.format_map(xresources)
+            except KeyError:
+                pass
         yield k, v
 
 
