@@ -26,10 +26,10 @@ bindings.commands:
         ",F": hint links spawn --userscript getfeed.sh {hint-url}
         ",p": config-cycle content.proxy "http://127.0.0.1:8080" "system"
         ",n": config-cycle content.user_stylesheets "~/.config/qutebrowser/dark.css" ""
-        '<z><l>': 'spawn --userscript qute-pass'
-        '<z><u><l>': 'spawn --userscript qute-pass --username-only'
-        '<z><p><l>': 'spawn --userscript qute-pass --password-only'
-        '<z><o><l>': 'spawn --userscript qute-pass --otp-only'
+        '<z><l>': 'spawn --userscript qute-pass --dmenu-invocation wofi'
+        '<z><u><l>': 'spawn --userscript qute-pass --dmenu-invocation "wofi --show dmenu" --username-only'
+        '<z><p><l>': 'spawn --userscript qute-pass --dmenu-invocation "wofi --show dmenu" --password-only'
+        '<z><o><l>': 'spawn --userscript qute-pass --dmenu-invocation "wofi --show dmenu" --otp-only'
     insert:
         <Ctrl+e>: scroll-down
         <Ctrl+y>: scroll-up
