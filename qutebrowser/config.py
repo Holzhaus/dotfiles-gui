@@ -2,6 +2,7 @@
 import dracula.draw
 
 import glob
+import re
 import os
 import subprocess
 import yaml
@@ -58,7 +59,9 @@ def read_yml(filepath, xresources=None):
             yaml_data = yaml_data['settings']
 
     for k, v in dict_attrs(yaml_data, autoconfig=autoconfig):
-        if xresources and isinstance(v, str):
+        if xresources and isinstance(v, str) and k not in {
+            "content.headers.user_agent",
+        }:
             v = v.format_map(xresources)
         yield k, v
 
@@ -90,20 +93,16 @@ for filename in config_files:
                     for subkey, subval in v.items()
                 }
             config_data[k].update(v)
+        elif match := re.match(r"^(content\.(?:media\.[^\.]*capture|register_protocol_handler))\.(.*)", k):
+            k = match.group(1)
+            pattern = match.group(2)
+            with config.pattern(pattern) as p:
+                setattr(p, k, v)
         else:
             config_data[k] = v
 
 for k, v in config_data.items():
     config.set(k, v)
-
-with config.pattern('*://meet.jit.si/') as p:
-    p.content.media.audio_capture = True
-    p.content.media.audio_video_capture = True
-    p.content.media.video_capture = True
-with config.pattern('*://ruhr-uni-bochum.zoom.us/') as p:
-    p.content.media.audio_capture = True
-    p.content.media.audio_video_capture = True
-    p.content.media.video_capture = True
 
 dracula.draw.blood(c, {
     'spacing': {
