@@ -59,10 +59,11 @@ def read_yml(filepath, xresources=None):
             yaml_data = yaml_data['settings']
 
     for k, v in dict_attrs(yaml_data, autoconfig=autoconfig):
-        if xresources and isinstance(v, str) and k not in {
-            "content.headers.user_agent",
-        }:
-            v = v.format_map(xresources)
+        if xresources and isinstance(v, str):
+            try:
+                v = v.format_map(xresources)
+            except KeyError:
+                pass
         yield k, v
 
 
